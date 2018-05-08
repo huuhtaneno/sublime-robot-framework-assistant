@@ -10,10 +10,12 @@ from robot.errors import DataError
 from os import path
 import xml.etree.ElementTree as ET
 from tempfile import mkdtemp
+import sys
 import logging
 import inspect
 from parser_utils.util import normalise_path
 from db_json_settings import DBJsonSetting
+
 
 logging.basicConfig(
     format='%(levelname)s:%(asctime)s: %(message)s',
@@ -110,13 +112,26 @@ class DataParser():
             else:
                 raise ValueError('Unknown library')
         else:
-            data[DBJsonSetting.library_module] = library
+            library, data = self._locate_file_from_path(library, data)
             data[DBJsonSetting.keywords] = self._parse_python_lib(
                 library, data[DBJsonSetting.arguments])
         if data[DBJsonSetting.keywords] is None:
             raise ValueError('Library did not contain keywords')
         else:
             return data
+
+    @staticmethod
+    def _locate_file_from_path(library, data):
+        file_name = path.basename(library)
+        for path_ in sys.path:
+            file_path = path.join(path_, file_name)
+            if path.isfile(file_path):
+                data[DBJsonSetting.file_name] = path.basename(file_path)
+                data[DBJsonSetting.library_module] = path.splitext(
+                    data[DBJsonSetting.file_name])[0]
+                return file_path, data
+        data[DBJsonSetting.library_module] = library
+        return library, data
 
     def register_console_logger(self):
         ROBOT_LOGGER.register_console_logger()

@@ -112,7 +112,7 @@ class Index(object):
             logging.warning('Error finding: %s', path.join(db_path, t_name))
             logging.debug('When creating index for: %s', table_name)
         elif read_status == 2:
-            logging.error('Unknow ValueError on %s', t_name)
+            logging.error('Unknown ValueError on %s', t_name)
             if data:
                 logging.debug(data)
             else:
@@ -195,6 +195,7 @@ class Index(object):
                     lib_import,
                     lib_args
                 )
+                logging.info("Library import successful. %s" % lib_import)
             except ValueError:
                 message = ('Unable to parse library "{0}"'
                            ', with args: "{1}"'.format(lib_import, lib_args))
@@ -232,7 +233,9 @@ class Index(object):
         """Formats keyword arguments to suite completions"""
         pattern = re.compile('(?:[\@\$\&]\{)(.+)(?:\})')
         comletion_args = []
+
         for arg in kw_args:
+
             arg_name, arg_default = self.split_arg(arg)
             match = pattern.search(arg_name)
             if not match:
@@ -242,7 +245,8 @@ class Index(object):
                 if arg.startswith('$') and arg_default:
                     comletion_args.append(
                         '{}={}'.format(
-                            arg_text, arg_default
+                            arg_text.encode("utf-8"),
+                            arg_default.encode("utf-8")
                         )
                     )
                 elif arg.startswith('$') and not arg_default:

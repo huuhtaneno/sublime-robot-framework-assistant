@@ -48,8 +48,13 @@ class Scanner(object):
         self.add_builtin()
         if self.xml_libraries:
             self.add_xml_libraries(self.xml_libraries)
-        for f in finder(workspace, ext):
-            self.queue.add(normalise_path(f), None, None)
+        if isinstance(type(ext), list):
+            for extension in ext:
+                for f in finder(workspace, extension):
+                    self.queue.add(normalise_path(f), None, None)
+        else:
+            for f in finder(workspace, ext):
+                self.queue.add(normalise_path(f), None, None)
         while True:
             item = self.get_item()
             if not item:

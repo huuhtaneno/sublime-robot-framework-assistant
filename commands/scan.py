@@ -14,8 +14,9 @@ def scan_popen_arg_parser(mode):
     arg_list.append(mode)
     arg_list.append('--db_path')
     arg_list.append(get_setting(SettingObject.table_dir))
-    arg_list.append('--extension')
-    arg_list.append(get_setting(SettingObject.extension))
+    for ext in get_setting(SettingObject.extension):
+        arg_list.append('--extension')
+        arg_list.append(ext)
     arg_list.append('--path_to_lib_in_xml')
     arg_list.append(get_setting(SettingObject.lib_in_xml))
     arg_list.append('--module_search_path')
@@ -48,6 +49,7 @@ class ScanCommand(sublime_plugin.TextCommand):
         p_args = scan_popen_arg_parser('all')
         p_args.append('--workspace')
         p_args.append(get_setting(SettingObject.workspace))
+        print("This is the log file: %s" % log_file)
         p = subprocess.Popen(
             p_args,
             stderr=subprocess.STDOUT,
@@ -58,6 +60,6 @@ class ScanCommand(sublime_plugin.TextCommand):
         if rc != 0:
             print('See log file from database directory for details')
             raise ValueError('Error in scanning result code: {0}'.format(rc))
-        message = 'Scaning done with rc: {0}'.format(rc)
+        message = 'Scanning done with rc: {0}'.format(rc)
         sublime.status_message(message)
         print(message)

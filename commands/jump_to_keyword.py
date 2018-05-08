@@ -20,7 +20,7 @@ class JumpToKeyword(sublime_plugin.TextCommand):
         db_dir = get_setting(SettingObject.table_dir)
         index_db = get_setting(SettingObject.index_dir)
         rf_cell = get_rf_table_separator(self.view)
-        rf_extension = get_setting(SettingObject.extension)
+        rf_extension = tuple(get_setting(SettingObject.extension))
         index_file = get_index_file(open_tab)
         jump_to_file = JumpToFile()
         line, column = get_line(self.view)

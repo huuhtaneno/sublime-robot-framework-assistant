@@ -51,7 +51,7 @@ class ScanOpenTabCommand(sublime_plugin.TextCommand):
         if not rc == 0:
             print('See log file from database directory for details')
             raise ValueError('Error in scanning result code: {0}'.format(rc))
-        message = 'Scaning done with rc: {0}'.format(rc)
+        message = 'Scanning done with rc: {0}'.format(rc)
         sublime.status_message(message)
         print(message)
 
@@ -60,7 +60,7 @@ class ScanOpenTabCommand(sublime_plugin.TextCommand):
         workspace = path.normcase(workspace)
         open_tab = path.normcase(open_tab)
         extension = get_setting(SettingObject.extension)
-        if open_tab.endswith(extension):
-            return open_tab.startswith(workspace)
-        else:
-            return False
+        for ext in extension:
+            if open_tab.endswith(ext):
+                return open_tab.startswith(workspace)
+        return False
